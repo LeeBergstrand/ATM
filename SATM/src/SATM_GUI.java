@@ -392,7 +392,10 @@ public class SATM_GUI extends javax.swing.JFrame
                 break;
         }
     }
-
+    
+    /**
+     * Checks if PIN is valid.
+     */
     private void checkPIN()
     {
         if (keynums.size() == 4)
@@ -427,6 +430,50 @@ public class SATM_GUI extends javax.swing.JFrame
         }
     }
 
+    /**
+     * Checks if PAN is valid.
+     */
+    private void checkPAN()
+    {
+        boolean foundCard = false;
+        for (int[] cardDB1 : cardDB)
+        {
+            if (cardDB1[0] == cardPan)
+            {
+                output.setText("Please enter your PIN");
+                state = 1;
+                foundCard = true;
+                cardPin = cardDB1[1];
+                break;
+            }
+        }
+
+        if (foundCard == false)
+        {
+            rejectCard();
+        }
+    }
+    
+    private void rejectCard()
+    {
+        output.setText("Invalid ATM card. It will be retained.");
+
+        ActionListener delayScreenWrite = new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent ae)
+            {
+                state = 0;
+                output.setText("Welcome please insert your ATM card");
+            }
+        };
+        Timer timer = new Timer(3000, delayScreenWrite);
+        timer.start();
+    }
+    
+    /**
+     * Checks if deposit amount is valid.
+     */
     private void checkDeposit()
     {
         if (keynums.size() == 4)
@@ -457,6 +504,9 @@ public class SATM_GUI extends javax.swing.JFrame
         }
     }
 
+    /**
+     * Checks if withdrawal amount is valid.
+     */
     private void checkWithdrawal()
     {
         if (keynums.size() == 4)
@@ -525,44 +575,6 @@ public class SATM_GUI extends javax.swing.JFrame
                 output.setText("Your new balance is being printed. Another transaction?");
             }
         }
-    }
-
-    private void checkPAN()
-    {
-        boolean foundCard = false;
-        for (int[] cardDB1 : cardDB)
-        {
-            if (cardDB1[0] == cardPan)
-            {
-                output.setText("Please enter your PIN");
-                state = 1;
-                foundCard = true;
-                cardPin = cardDB1[1];
-                break;
-            }
-        }
-
-        if (foundCard == false)
-        {
-            rejectCard();
-        }
-    }
-
-    private void rejectCard()
-    {
-        output.setText("Invalid ATM card. It will be retained.");
-
-        ActionListener delayScreenWrite = new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent ae)
-            {
-                state = 0;
-                output.setText("Welcome please insert your ATM card");
-            }
-        };
-        Timer timer = new Timer(3000, delayScreenWrite);
-        timer.start();
     }
 
     private void outputActionPerformed(java.awt.event.ActionEvent evt)
