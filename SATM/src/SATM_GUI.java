@@ -429,6 +429,8 @@ public class SATM_GUI extends javax.swing.JFrame
             }
         }
     }
+    
+    
 
     /**
      * Checks if PAN is valid.
@@ -440,8 +442,9 @@ public class SATM_GUI extends javax.swing.JFrame
         {
             if (cardDB1[0] == cardPan)
             {
-                output.setText("Please enter your PIN");
                 state = 1;
+                output.setText("Please enter your PIN");
+                
                 foundCard = true;
                 cardPin = cardDB1[1];
                 break;
@@ -471,6 +474,30 @@ public class SATM_GUI extends javax.swing.JFrame
         timer.start();
     }
     
+    
+    /**
+     * Transitions to the next state with time delay.
+     * 
+     * @param delay_state: The state of the next transition.
+     * @param delay_message: The message of the next transition.
+     * @param delay_time: The delay time of the next transition in milliseconds. 
+     */
+    private void delayed_state_transition(final int delay_state, final String delay_message, int delay_time) {
+        ActionListener delayScreenWrite = new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent ae)
+            {
+                state = delay_state;
+                output.setText(delay_message);
+            }
+        };
+        
+        Timer timer = new Timer(delay_time, delayScreenWrite);
+        timer.start();
+        timer.setRepeats(false);
+    }
+    
     /**
      * Checks if deposit amount is valid.
      */
@@ -488,22 +515,12 @@ public class SATM_GUI extends javax.swing.JFrame
             keynums.clear();
 
             output.setText("Please insert deposit into deposit slot.");
-
-            ActionListener delayScreenWrite = new ActionListener()
-            {
-                @Override
-                public void actionPerformed(ActionEvent ae)
-                {
-                    state = 3;
-                    output.setText("Your new balance is being printed. Another transaction?");
-                }
-            };
-
-            Timer timer = new Timer(3000, delayScreenWrite);
-            timer.start();
+            
+            delayed_state_transition(3,"Your new balance is being printed. Another transaction?", 3000);    
         }
     }
 
+    
     /**
      * Checks if withdrawal amount is valid.
      */
@@ -523,50 +540,17 @@ public class SATM_GUI extends javax.swing.JFrame
             {
                 output.setText("Machine can only dispense $10 notes");
 
-                ActionListener delayScreenWrite = new ActionListener()
-                {
-                    @Override
-                    public void actionPerformed(ActionEvent ae)
-                    {
-                        state = 6;
-                        output.setText("Enter amount. Withdrawals must be multiples of $10 ");
-                    }
-                };
-
-                Timer timer = new Timer(3000, delayScreenWrite);
-                timer.start();
+                delayed_state_transition(6,"Enter amount. Withdrawals must be multiples of $10", 3000);
             }
             else if (withdrawal_amount > ATMBalance)
             {
                 output.setText("Insufficient ATM Funds! Please enter a new amount");
-                ActionListener delayScreenWrite = new ActionListener()
-                {
-                    @Override
-                    public void actionPerformed(ActionEvent ae)
-                    {
-                        state = 6;
-                        output.setText("Enter amount. Withdrawals must be multiples of $10 ");
-                    }
-                };
-
-                Timer timer = new Timer(3000, delayScreenWrite);
-                timer.start();
+                delayed_state_transition(6,"Enter amount. Withdrawals must be multiples of $10", 3000);
             }
             else if (withdrawal_amount > USERBalance)
             {
                 output.setText("Insufficient USER Funds! Please enter a new amount");
-                ActionListener delayScreenWrite = new ActionListener()
-                {
-                    @Override
-                    public void actionPerformed(ActionEvent ae)
-                    {
-                        state = 6;
-                        output.setText("Enter amount. Withdrawals must be multiples of $10 ");
-                    }
-                };
-
-                Timer timer = new Timer(3000, delayScreenWrite);
-                timer.start();
+                delayed_state_transition(6,"Enter amount. Withdrawals must be multiples of $10", 3000);
             }
             else
             {
@@ -577,6 +561,7 @@ public class SATM_GUI extends javax.swing.JFrame
         }
     }
 
+ 
     private void outputActionPerformed(java.awt.event.ActionEvent evt)
     {//GEN-FIRST:event_outputActionPerformed
         // TODO add your handling code here:
